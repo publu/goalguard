@@ -1,12 +1,40 @@
-# goalguard
+<p align="center">
+  <img src="assets/goalguard.png" alt="goalguard" width="300">
+</p>
 
-**The guard that won't let your AI agent quit early.**
+<h1 align="center">goalguard</h1>
 
-A simple philosophy: **the agent doesn't get to decide it's done — the checklist does.**
-Most agents stop the moment they *think* they're finished — the half-done
-refactor, the "I'll leave the tests to you", the silently dropped requirement.
-goalguard holds a session to an explicit, verifiable checklist and bounces every
-premature stop straight back into more work.
+<p align="center"><em>You say you're done. She checks the list. You're not done.</em></p>
+
+<p align="center">
+  <img src="https://img.shields.io/github/stars/publu/goalguard?style=flat-square&label=stars&color=333&labelColor=555" alt="stars">
+  <img src="https://img.shields.io/badge/release-v0.1.0-333?style=flat-square&labelColor=555" alt="release">
+  <img src="https://img.shields.io/badge/works%20with-Claude%20Code-333?style=flat-square&labelColor=555" alt="works with">
+  <img src="https://img.shields.io/badge/license-MIT-333?style=flat-square&labelColor=555" alt="license">
+</p>
+
+<p align="center">
+  <strong>2.4–15.6× more tasks finished · 5/5 vs ~2/5 delivered · 80% fewer defects shipped</strong>
+</p>
+
+<p align="center">
+  From 20,000 seeded simulation runs across mild/typical/severe early-stop rates. <a href="#results">Reproduce it yourself.</a>
+</p>
+
+---
+
+You know her. Peaked cap, clipboard, posted at the only door out of the building.
+Has signed off every release since before CI existed. You tell her you're
+finished; she runs a finger down the list, says *"three of these aren't
+checked,"* and points you back to your desk.
+
+goalguard puts her on the **Stop hook** of your AI agent.
+
+The philosophy is one line: **the agent doesn't get to decide it's done — the
+checklist does.** Most agents stop the moment they *think* they're finished — the
+half-done refactor, the "I'll leave the tests to you", the silently dropped
+requirement. goalguard holds a session to an explicit, verifiable checklist and
+bounces every premature stop straight back into more work.
 
 ## The decision it makes
 
