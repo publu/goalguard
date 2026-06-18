@@ -204,7 +204,7 @@ See `goalkeeper-config.js :: stopReason()` for the canonical wording.
 | `strict`   | any goal is not `done` **and** `verified`       | high-stakes work; forces a double-check pass |
 
 Selected via `GOALKEEPER_DEFAULT_MODE`, `goalkeeper-cli.js mode`, or
-`/goalkeeper-mode`. Mode set in state wins over the env default.
+`/goalkeeper:mode`. Mode set in state wins over the env default.
 
 ---
 
@@ -255,7 +255,7 @@ the plugin manifests; no JavaScript differs between them.
   session.
 - **Node optional.** If `node` is absent from `PATH`, the hooks no-op (`|| exit 0`)
   and Claude Code behaves exactly as if the plugin were not installed.
-- **User-owned escape hatch.** `/goalkeeper-release`, `mode off`, deleting the
+- **User-owned escape hatch.** `/goalkeeper:release`, `mode off`, deleting the
   state file, or uninstalling the plugin all stand the guard down immediately.
 
 ---

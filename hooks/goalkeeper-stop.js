@@ -64,19 +64,31 @@ function emit(obj) {
 
   const open = rt.openGoals(state.goals, mode);
 
-  // Everything resolved: release the guard with a quiet banner.
+  // Everything resolved. Before releasing, issue ONE scope check (standard/
+  // strict only): force the agent to confront whether it narrowed any goal to
+  // make it finishable. This blocks at most once — the scopeChallenged flag
+  // guarantees the very next Stop releases regardless, so it can never loop.
   if (open.length === 0) {
+    const challengeable = mode === 'standard' || mode === 'strict';
+    if (challengeable && !state.scopeChallenged) {
+      state.scopeChallenged = true;
+      state.iterations = 0;
+      state.lastOpen = 0;
+      rt.writeState(dir, state);
+      emit({ decision: 'block', reason: cfg.scopeChallenge(state.goals, mode) });
+      process.exit(0);
+    }
+    // Released: exit SILENTLY — emitting additionalContext here would re-inject
+    // feedback on the Stop event, reviving the turn and looping to the cap.
     state.iterations = 0;
     state.lastOpen = 0;
     rt.writeState(dir, state);
-    emit({
-      hookSpecificOutput: {
-        hookEventName: 'Stop',
-        additionalContext: cfg.successBanner(state.goals.length, mode),
-      },
-    });
     process.exit(0);
   }
+
+  // Open goals remain (possibly reopened in response to the scope check):
+  // re-arm the challenge so a future re-resolution is checked again.
+  state.scopeChallenged = false;
 
   // Progress since the last block refills the loop budget.
   if (open.length < state.lastOpen) state.iterations = 0;

@@ -1,7 +1,7 @@
 {
   "name": "goalkeeper",
   "displayName": "goalkeeper",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Stop-hook guard that won't let an AI agent quit until its goals are provably complete. Re-injects the unfinished checklist on every attempt to stop, and double-checks the work in strict mode.",
   "author": {
     "name": "publu",

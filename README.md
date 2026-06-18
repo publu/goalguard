@@ -115,7 +115,7 @@ codex
 
 Then open `/plugins`, install goalkeeper, open `/hooks`, review and **trust** its
 hooks, and start a new thread. (In Codex, commands are invoked with `@`, e.g.
-`@goalkeeper-status`.)
+`@goalkeeper:status`.)
 
 Requires `node` on your `PATH`. If node is missing, the hooks no-op and the host
 behaves exactly as if goalkeeper weren't installed.
@@ -127,14 +127,14 @@ behaves exactly as if goalkeeper weren't installed.
 Point it at an objective and walk away:
 
 ```
-/goalkeeper get the auth refactor to green — all tests pass and lint is clean
+/goalkeeper:go get the auth refactor to green — all tests pass and lint is clean
 ```
 
 goalkeeper asks the agent to break that into concrete, verifiable goals, arms the
 guard, and the agent works until every one is checked off. Check status anytime:
 
 ```
-/goalkeeper-status
+/goalkeeper:status
 ```
 
 ```
@@ -160,7 +160,7 @@ When the checklist is empty, the guard steps aside on its own. You never run a
 | `strict`   | Blocks until every goal is done **and independently verified**.      |
 
 ```
-/goalkeeper-mode strict
+/goalkeeper:mode strict
 ```
 
 **Strict mode is the long-runner.** Marking a goal `done` isn't enough — it stays
@@ -175,12 +175,12 @@ working.
 
 | Command                                   | Does                                            |
 | ----------------------------------------- | ----------------------------------------------- |
-| `/goalkeeper <objective>`                  | Decompose an objective into goals and start.    |
-| `/goalkeeper-add <goal>`                   | Add one verifiable goal.                         |
-| `/goalkeeper-status`                       | Show mode + checklist.                            |
-| `/goalkeeper-mode [off\|lite\|standard\|strict]` | Get/set strictness.                       |
-| `/goalkeeper-release`                      | Clear goals, stand the guard down.               |
-| `/goalkeeper-help`                         | What goalkeeper is, in the session.               |
+| `/goalkeeper:go <objective>`               | Decompose an objective into goals and start.    |
+| `/goalkeeper:add <goal>`                   | Add one verifiable goal.                         |
+| `/goalkeeper:status`                       | Show mode + checklist.                            |
+| `/goalkeeper:mode [off\|lite\|standard\|strict]` | Get/set strictness.                       |
+| `/goalkeeper:release`                      | Clear goals, stand the guard down.               |
+| `/goalkeeper:help`                         | What goalkeeper is, in the session.               |
 
 The agent checks goals off as it works via the bundled CLI
 (`done`, `verify`, `reopen`, `remove`) — you rarely touch it directly.

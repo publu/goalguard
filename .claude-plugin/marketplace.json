@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "goalkeeper marketplace — the guard that keeps agents working until the job is done.",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "plugins": [
     {
       "name": "goalkeeper",
       "source": "./",
       "description": "A Stop-hook guard that won't let an AI agent quit until its goals are provably complete.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "category": "workflow",
       "keywords": ["stop-hook", "agent", "autonomy", "goals", "verification"]
     }

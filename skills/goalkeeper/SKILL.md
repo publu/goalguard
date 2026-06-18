@@ -16,8 +16,8 @@ but only **you** can close goals out, and only honestly.
 
 ## The loop
 
-1. **Arm** with goals. Either the user runs `/goalkeeper <objective>` (which asks
-   you to decompose it), or you record goals yourself as you discover them:
+1. **Arm** with goals. Either the user runs `/goalkeeper:go <objective>` (which
+   asks you to decompose it), or you record goals yourself as you discover them:
 
    ```bash
    node "${CLAUDE_PLUGIN_ROOT}/hooks/goalkeeper-cli.js" add "all tests in src/ pass"

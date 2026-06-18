@@ -57,6 +57,7 @@ function blankState() {
     goals: [],
     iterations: 0,
     lastOpen: 0,
+    scopeChallenged: false,
     updated: new Date().toISOString(),
   };
 }
@@ -69,6 +70,7 @@ function readState(dir) {
     if (!VALID_MODES.includes(data.mode)) data.mode = envMode();
     if (typeof data.iterations !== 'number') data.iterations = 0;
     if (typeof data.lastOpen !== 'number') data.lastOpen = 0;
+    if (typeof data.scopeChallenged !== 'boolean') data.scopeChallenged = false;
     return data;
   } catch {
     return blankState();

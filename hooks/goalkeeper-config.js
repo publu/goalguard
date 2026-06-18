@@ -46,9 +46,25 @@ function reminder(state) {
   ].join('\n');
 }
 
-/** Shown (without blocking) when all goals are finally closed. */
-function successBanner(count, mode) {
-  return `[goalkeeper] All ${count} goal(s) resolved${mode === 'strict' ? ' and verified' : ''}. Guard released — you may stop.`;
+/**
+ * The one-time scope check, issued the first time every goal reads as done.
+ * Self-marked goals are an honor-system checkbox: an agent can narrow "the
+ * website" to one page, tick the box, and walk. This forces it to restate
+ * each goal's ORIGINAL scope and reopen anything it quietly shrank — exactly
+ * once. The Stop hook releases on the next attempt regardless, so this can
+ * never loop.
+ */
+function scopeChallenge(goals, mode) {
+  return [
+    'SCOPE CHECK BEFORE GOALKEEPER RELEASES. Every goal is marked done — confirm you did the WHOLE thing, not a convenient slice of it.',
+    '',
+    'For each goal below, restate its original scope in one line, then answer honestly: did you complete that full scope, or did you narrow / reinterpret / sample it to make it finishable?',
+    renderGoals(goals, mode),
+    '',
+    '  - If you silently shrank any goal (one page of many, the happy path only, a stub where real work was asked), REOPEN it now: `' + CLI + ' reopen <id>` and finish the real scope.',
+    '  - If a goal is genuinely narrower than its words by an explicit earlier decision, say so in one sentence so the user can see the call you made.',
+    '  - If every goal truly meets its full original scope, stop normally — goalkeeper will release you and will not ask again.',
+  ].join('\n');
 }
 
 /** Shown (without blocking) when the loop budget is spent — the safety rail. */
@@ -107,7 +123,7 @@ module.exports = {
   MODE_BLURB,
   renderGoals,
   reminder,
-  successBanner,
+  scopeChallenge,
   budgetExhausted,
   stopReason,
 };
