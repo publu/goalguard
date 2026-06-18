@@ -1,4 +1,4 @@
-# goalguard — Specification
+# goalkeeper — Specification
 
 **Version:** 0.1.0
 **Status:** Stable core, additive roadmap
@@ -8,8 +8,8 @@
 
 ## 1. Summary
 
-goalguard is the inverse of a "lazy developer" ruleset. Where a steering plugin
-shapes *what* an agent writes, goalguard governs *when an agent is allowed to
+goalkeeper is the inverse of a "lazy developer" ruleset. Where a steering plugin
+shapes *what* an agent writes, goalkeeper governs *when an agent is allowed to
 stop*. It holds a session to an explicit, verifiable goal checklist and, on
 every attempt to end the turn, re-injects the unfinished goals as the agent's
 next instruction. The agent cannot quit early; it is released the instant — and
@@ -33,7 +33,7 @@ around that one sentence.
 ## 2. Design principles
 
 1. **Force continuation, not just steering.** Most agent tooling shapes *what*
-   the model does each turn. goalguard governs *whether the turn is allowed to
+   the model does each turn. goalkeeper governs *whether the turn is allowed to
    end* — it re-injects an *obligation* every time the agent tries to stop. The
    leverage point is the `Stop` event, not `UserPromptSubmit`.
 
@@ -64,40 +64,40 @@ around that one sentence.
 ```
                  ┌─────────────────────────── Claude Code session ──────────────────────────┐
                  │                                                                            │
-  SessionStart ──┼──▶ goalguard-activate.js ──▶ load state, surface carried-over goals       │
+  SessionStart ──┼──▶ goalkeeper-activate.js ──▶ load state, surface carried-over goals       │
                  │                                                                            │
- UserPromptSubmit┼──▶ goalguard-prompt.js   ──▶ re-staple open checklist into context        │
+ UserPromptSubmit┼──▶ goalkeeper-prompt.js   ──▶ re-staple open checklist into context        │
                  │                                                                            │
       agent works├ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ │
-   marks goals ──┼──▶ goalguard-cli.js      ──▶ add / done / verify / reopen / remove         │
+   marks goals ──┼──▶ goalkeeper-cli.js      ──▶ add / done / verify / reopen / remove         │
                  │                                                                            │
-         Stop ───┼──▶ goalguard-stop.js     ──▶ open goals? ── yes ─▶ {"decision":"block",    │
+         Stop ───┼──▶ goalkeeper-stop.js     ──▶ open goals? ── yes ─▶ {"decision":"block",    │
                  │            │                                        "reason": checklist}    │
                  │            └───────────────── no ─▶ exit 0 (release)                        │
                  └────────────────────────────────────────────────────────────────────────────┘
                                               │
-                                  <project>/.goalguard/state.json   (single source of truth)
+                                  <project>/.goalkeeper/state.json   (single source of truth)
 ```
 
 **Components**
 
 | File                     | Role                                                              |
 | ------------------------ | ---------------------------------------------------------------- |
-| `hooks/goalguard-runtime.js` | Shared state model + pure decision helpers. No side effects beyond file I/O. |
-| `hooks/goalguard-config.js`  | Every injected string, incl. the load-bearing Stop `reason`.  |
-| `hooks/goalguard-stop.js`    | The `Stop` hook — the continuation engine.                    |
-| `hooks/goalguard-prompt.js`  | The `UserPromptSubmit` hook — keeps goals in view.            |
-| `hooks/goalguard-activate.js`| The `SessionStart` hook — arms resumed sessions.             |
-| `hooks/goalguard-cli.js`     | Control surface for commands and the agent.                  |
+| `hooks/goalkeeper-runtime.js` | Shared state model + pure decision helpers. No side effects beyond file I/O. |
+| `hooks/goalkeeper-config.js`  | Every injected string, incl. the load-bearing Stop `reason`.  |
+| `hooks/goalkeeper-stop.js`    | The `Stop` hook — the continuation engine.                    |
+| `hooks/goalkeeper-prompt.js`  | The `UserPromptSubmit` hook — keeps goals in view.            |
+| `hooks/goalkeeper-activate.js`| The `SessionStart` hook — arms resumed sessions.             |
+| `hooks/goalkeeper-cli.js`     | Control surface for commands and the agent.                  |
 | `hooks/hooks.json`           | Wires the three events.                                       |
 | `commands/*.md`              | Slash commands.                                               |
-| `skills/goalguard/SKILL.md`  | Teaches the agent its half of the loop.                      |
+| `skills/goalkeeper/SKILL.md`  | Teaches the agent its half of the loop.                      |
 
 ---
 
 ## 4. State model
 
-Project-scoped, at `<project>/.goalguard/state.json`. One project = one active
+Project-scoped, at `<project>/.goalkeeper/state.json`. One project = one active
 goal set; concurrent sessions on the same project share it.
 
 ```jsonc
@@ -137,7 +137,7 @@ The guard releases when zero goals are open.
 
 ## 5. The Stop algorithm
 
-`goalguard-stop.js`, on each `Stop` event:
+`goalkeeper-stop.js`, on each `Stop` event:
 
 ```
 input  ← JSON on stdin  (session_id, cwd, stop_hook_active, …)
@@ -170,7 +170,7 @@ session.**
 - **Progress refills, stagnation drains.** The budget only decrements while the
   open-goal count is *not* falling. A productive agent never trips it; a stuck
   agent trips it within `MAX_LOOPS` blocks.
-- **`stop_hook_active` is informational, not a kill switch.** goalguard tracks
+- **`stop_hook_active` is informational, not a kill switch.** goalkeeper tracks
   its own progress-aware counter rather than bailing the first time it sees a
   re-entrant stop, because re-entry is the normal, desired case here.
 - **Three independent exits:** `off`, empty checklist, and the budget rail.
@@ -181,7 +181,7 @@ session.**
 
 The text returned as `reason` is the product. It must, in order:
 
-1. **Refuse the stop** unambiguously (`STOP BLOCKED BY GOALGUARD. You are not done.`).
+1. **Refuse the stop** unambiguously (`STOP BLOCKED BY GOALKEEPER. You are not done.`).
 2. **Re-state the exact open goals** with their ids and status boxes.
 3. **Demand the next concrete action** — the smallest real step, not a summary,
    not a permission request.
@@ -190,7 +190,7 @@ The text returned as `reason` is the product. It must, in order:
 5. **Forbid silent abandonment** — an out-of-scope goal must be `remove`-d with a
    stated reason, never quietly dropped.
 
-See `goalguard-config.js :: stopReason()` for the canonical wording.
+See `goalkeeper-config.js :: stopReason()` for the canonical wording.
 
 ---
 
@@ -203,8 +203,8 @@ See `goalguard-config.js :: stopReason()` for the canonical wording.
 | `standard` | any goal is not `done`                          | normal autonomous completion (default)      |
 | `strict`   | any goal is not `done` **and** `verified`       | high-stakes work; forces a double-check pass |
 
-Selected via `GOALGUARD_DEFAULT_MODE`, `goalguard-cli.js mode`, or
-`/goalguard-mode`. Mode set in state wins over the env default.
+Selected via `GOALKEEPER_DEFAULT_MODE`, `goalkeeper-cli.js mode`, or
+`/goalkeeper-mode`. Mode set in state wins over the env default.
 
 ---
 
@@ -212,22 +212,22 @@ Selected via `GOALGUARD_DEFAULT_MODE`, `goalguard-cli.js mode`, or
 
 | Variable                 | Default    | Effect                                                |
 | ------------------------ | ---------- | ----------------------------------------------------- |
-| `GOALGUARD_DEFAULT_MODE` | `standard` | Starting mode when state has none.                    |
-| `GOALGUARD_MAX_LOOPS`    | `30`       | Max consecutive Stop-blocks **without progress** before the guard stands down. |
-| `CLAUDE_PROJECT_DIR`     | (host)     | Project root; falls back to the hook's `cwd`, then `GOALGUARD_DIR`, then `process.cwd()`. |
-| `GOALGUARD_DIR`          | —          | Explicit override for the guarded directory (mainly for tests/CI). |
+| `GOALKEEPER_DEFAULT_MODE` | `standard` | Starting mode when state has none.                    |
+| `GOALKEEPER_MAX_LOOPS`    | `30`       | Max consecutive Stop-blocks **without progress** before the guard stands down. |
+| `CLAUDE_PROJECT_DIR`     | (host)     | Project root; falls back to the hook's `cwd`, then `GOALKEEPER_DIR`, then `process.cwd()`. |
+| `GOALKEEPER_DIR`          | —          | Explicit override for the guarded directory (mainly for tests/CI). |
 
 ---
 
 ## 9. Contracts (host integration)
 
-goalguard depends only on documented hook contracts that **Claude Code and Codex
+goalkeeper depends only on documented hook contracts that **Claude Code and Codex
 share**:
 
 - **Stop** receives `{session_id, transcript_path, cwd, stop_hook_active, …}` on
   stdin; returning `{"decision":"block","reason":string}` forces continuation
   with `reason` as the next instruction. (Exit code 2 + stderr is an equivalent
-  block; goalguard uses the JSON form.) On Claude Code the turn continues; on
+  block; goalkeeper uses the JSON form.) On Claude Code the turn continues; on
   Codex the `reason` is injected as the next user prompt — same effect.
 - **UserPromptSubmit / SessionStart** accept
   `{"hookSpecificOutput":{"hookEventName":…,"additionalContext":string}}` to
@@ -250,19 +250,19 @@ the plugin manifests; no JavaScript differs between them.
 ## 10. Security & safety
 
 - **No network, no telemetry.** Pure local file I/O under the project dir.
-- **No path traversal.** State is confined to `<project>/.goalguard/`.
-- **Fail-open.** Every hook exits 0 on any error; goalguard can never deadlock a
+- **No path traversal.** State is confined to `<project>/.goalkeeper/`.
+- **Fail-open.** Every hook exits 0 on any error; goalkeeper can never deadlock a
   session.
 - **Node optional.** If `node` is absent from `PATH`, the hooks no-op (`|| exit 0`)
   and Claude Code behaves exactly as if the plugin were not installed.
-- **User-owned escape hatch.** `/goalguard-release`, `mode off`, deleting the
+- **User-owned escape hatch.** `/goalkeeper-release`, `mode off`, deleting the
   state file, or uninstalling the plugin all stand the guard down immediately.
 
 ---
 
 ## 11. Non-goals
 
-- Not a planner or a task queue. goalguard tracks completion; it does not decide
+- Not a planner or a task queue. goalkeeper tracks completion; it does not decide
   *what* the goals should be (the agent/user does).
 - Not a sandbox or permission system. It governs stopping, not what the agent is
   allowed to do.

@@ -1,17 +1,17 @@
 'use strict';
 
 /**
- * goalguard-config.js
+ * goalkeeper-config.js
  *
- * Every piece of natural-language that goalguard injects back into the
+ * Every piece of natural-language that goalkeeper injects back into the
  * agent lives here. The Stop reason is the load-bearing wall of the whole
  * project: it is the text the model is forced to read instead of stopping.
  */
 
-const CLI = 'node "${CLAUDE_PLUGIN_ROOT}/hooks/goalguard-cli.js"';
+const CLI = 'node "${CLAUDE_PLUGIN_ROOT}/hooks/goalkeeper-cli.js"';
 
 const MODE_BLURB = {
-  off: 'disarmed — goalguard will not block stopping',
+  off: 'disarmed — goalkeeper will not block stopping',
   lite: 'one nudge — blocks once, then lets you stop',
   standard: 'blocks until every goal is marked done',
   strict: 'blocks until every goal is done AND independently verified',
@@ -39,7 +39,7 @@ function reminder(state) {
   );
   if (state.mode === 'off' || state.goals.length === 0) return '';
   return [
-    `[goalguard:${state.mode}] ${open.length} of ${state.goals.length} goal(s) still open. goalguard will not let this session stop until they are resolved.`,
+    `[goalkeeper:${state.mode}] ${open.length} of ${state.goals.length} goal(s) still open. goalkeeper will not let this session stop until they are resolved.`,
     renderGoals(state.goals, state.mode),
     `Update progress as you go: \`${CLI} done <id>\`` +
       (state.mode === 'strict' ? `, then \`${CLI} verify <id>\` once you have proof.` : '.'),
@@ -48,16 +48,16 @@ function reminder(state) {
 
 /** Shown (without blocking) when all goals are finally closed. */
 function successBanner(count, mode) {
-  return `[goalguard] All ${count} goal(s) resolved${mode === 'strict' ? ' and verified' : ''}. Guard released — you may stop.`;
+  return `[goalkeeper] All ${count} goal(s) resolved${mode === 'strict' ? ' and verified' : ''}. Guard released — you may stop.`;
 }
 
 /** Shown (without blocking) when the loop budget is spent — the safety rail. */
 function budgetExhausted(open, mode, max) {
   return [
-    `[goalguard] Loop budget exhausted (${max} continuations without progress).`,
-    `${open.length} goal(s) are still open but goalguard is standing down to avoid an infinite loop:`,
+    `[goalkeeper] Loop budget exhausted (${max} continuations without progress).`,
+    `${open.length} goal(s) are still open but goalkeeper is standing down to avoid an infinite loop:`,
     renderGoals(open, mode),
-    `Tell the user these are unfinished, or raise the budget with GOALGUARD_MAX_LOOPS and try again.`,
+    `Tell the user these are unfinished, or raise the budget with GOALKEEPER_MAX_LOOPS and try again.`,
   ].join('\n');
 }
 
@@ -71,7 +71,7 @@ function budgetExhausted(open, mode, max) {
  */
 function stopReason(open, mode, iteration, max) {
   const lines = [];
-  lines.push('STOP BLOCKED BY GOALGUARD. You are not done.');
+  lines.push('STOP BLOCKED BY GOALKEEPER. You are not done.');
   lines.push('');
   lines.push(
     `You set out to complete these goals and ${open.length} remain open (${mode} mode, continuation ${iteration}/${max}):`
@@ -98,7 +98,7 @@ function stopReason(open, mode, iteration, max) {
   }
 
   lines.push('');
-  lines.push('Rules: keep working until the checklist is empty. Do not stop to report progress — goalguard will release you automatically the moment every goal is resolved. If a goal is genuinely impossible or out of scope, drop it explicitly with `' + CLI + ' remove <id>` and say why; never silently abandon it.');
+  lines.push('Rules: keep working until the checklist is empty. Do not stop to report progress — goalkeeper will release you automatically the moment every goal is resolved. If a goal is genuinely impossible or out of scope, drop it explicitly with `' + CLI + ' remove <id>` and say why; never silently abandon it.');
   return lines.join('\n');
 }
 

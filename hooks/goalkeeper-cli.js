@@ -2,26 +2,26 @@
 'use strict';
 
 /**
- * goalguard-cli.js  —  the control surface.
+ * goalkeeper-cli.js  —  the control surface.
  *
  * Slash commands shell out to this, and the agent calls it directly to
  * check goals off as it works. It is a thin, dependency-free wrapper over
- * the shared state in goalguard-runtime.js.
+ * the shared state in goalkeeper-runtime.js.
  *
  * Usage:
- *   goalguard-cli.js mode [off|lite|standard|strict]
- *   goalguard-cli.js add   "<goal text>"        # repeatable
- *   goalguard-cli.js list
- *   goalguard-cli.js status
- *   goalguard-cli.js done   <id>
- *   goalguard-cli.js verify <id>
- *   goalguard-cli.js reopen <id>
- *   goalguard-cli.js remove <id>
- *   goalguard-cli.js release            # clear all goals (disarm this project)
+ *   goalkeeper-cli.js mode [off|lite|standard|strict]
+ *   goalkeeper-cli.js add   "<goal text>"        # repeatable
+ *   goalkeeper-cli.js list
+ *   goalkeeper-cli.js status
+ *   goalkeeper-cli.js done   <id>
+ *   goalkeeper-cli.js verify <id>
+ *   goalkeeper-cli.js reopen <id>
+ *   goalkeeper-cli.js remove <id>
+ *   goalkeeper-cli.js release            # clear all goals (disarm this project)
  */
 
-const rt = require('./goalguard-runtime');
-const cfg = require('./goalguard-config');
+const rt = require('./goalkeeper-runtime');
+const cfg = require('./goalkeeper-config');
 
 function out(s) {
   process.stdout.write(s + '\n');
@@ -29,7 +29,7 @@ function out(s) {
 
 function printStatus(state) {
   const open = rt.openGoals(state.goals, state.mode);
-  out(`goalguard  mode=${state.mode}  (${cfg.MODE_BLURB[state.mode]})`);
+  out(`goalkeeper  mode=${state.mode}  (${cfg.MODE_BLURB[state.mode]})`);
   out(`${state.goals.length} goal(s), ${open.length} open:`);
   out(cfg.renderGoals(state.goals, state.mode));
 }
@@ -124,7 +124,7 @@ function main(argv) {
       return 0;
 
     default:
-      out(`unknown command "${cmd}". See goalguard-cli.js for usage.`);
+      out(`unknown command "${cmd}". See goalkeeper-cli.js for usage.`);
       return 1;
   }
 }

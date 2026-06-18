@@ -2,7 +2,7 @@
 'use strict';
 
 /**
- * goalguard conformance test — exercises every item in SPEC.md §12.
+ * goalkeeper conformance test — exercises every item in SPEC.md §12.
  * No dependencies. Run: `node benchmarks/conformance.test.js`
  */
 
@@ -12,8 +12,8 @@ const os = require('os');
 const path = require('path');
 
 const HOOKS = path.join(__dirname, '..', 'hooks');
-const STOP = path.join(HOOKS, 'goalguard-stop.js');
-const CLI = path.join(HOOKS, 'goalguard-cli.js');
+const STOP = path.join(HOOKS, 'goalkeeper-stop.js');
+const CLI = path.join(HOOKS, 'goalkeeper-cli.js');
 
 let pass = 0;
 let fail = 0;
@@ -28,12 +28,12 @@ function check(name, cond) {
 }
 
 function freshDir() {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'goalguard-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'goalkeeper-'));
 }
 
 function cli(dir, args) {
   return execFileSync('node', [CLI, ...args], {
-    env: { ...process.env, GOALGUARD_DIR: dir },
+    env: { ...process.env, GOALKEEPER_DIR: dir },
     encoding: 'utf8',
   });
 }
@@ -44,7 +44,7 @@ function stop(dir, stdin) {
   let code = 0;
   try {
     out = execFileSync('node', [STOP], {
-      env: { ...process.env, GOALGUARD_DIR: dir },
+      env: { ...process.env, GOALKEEPER_DIR: dir },
       input: stdin === undefined ? '{"hook_event_name":"Stop"}' : stdin,
       encoding: 'utf8',
     });
@@ -61,7 +61,7 @@ function stop(dir, stdin) {
   return { block: parsed.decision === 'block', reason: parsed.reason || '', out, code };
 }
 
-console.log('goalguard conformance (SPEC.md §12)\n');
+console.log('goalkeeper conformance (SPEC.md §12)\n');
 
 // 1. off mode and empty checklist both allow stopping.
 {
@@ -118,7 +118,7 @@ console.log('goalguard conformance (SPEC.md §12)\n');
   cli(d, ['mode', 'standard']);
   cli(d, ['add', 'a']);
   cli(d, ['add', 'b']);
-  const env = { ...process.env, GOALGUARD_DIR: d, GOALGUARD_MAX_LOOPS: '3' };
+  const env = { ...process.env, GOALKEEPER_DIR: d, GOALKEEPER_MAX_LOOPS: '3' };
   const stopEnv = () => {
     try {
       const out = execFileSync('node', [STOP], { env, input: '{}', encoding: 'utf8' });
@@ -146,8 +146,8 @@ console.log('goalguard conformance (SPEC.md §12)\n');
 
   // Corrupt state file is treated as blank state -> allow, no crash.
   const d2 = freshDir();
-  fs.mkdirSync(path.join(d2, '.goalguard'), { recursive: true });
-  fs.writeFileSync(path.join(d2, '.goalguard', 'state.json'), '{ broken json');
+  fs.mkdirSync(path.join(d2, '.goalkeeper'), { recursive: true });
+  fs.writeFileSync(path.join(d2, '.goalkeeper', 'state.json'), '{ broken json');
   const r2 = stop(d2);
   check('corrupt state file fails open', !r2.block && r2.code === 0);
 }

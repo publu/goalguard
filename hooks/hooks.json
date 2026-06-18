@@ -6,10 +6,10 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v node >/dev/null 2>&1 && node \"${CLAUDE_PLUGIN_ROOT}/hooks/goalguard-activate.js\" || exit 0",
-            "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\goalguard-activate.js\" }",
+            "command": "command -v node >/dev/null 2>&1 && node \"${CLAUDE_PLUGIN_ROOT}/hooks/goalkeeper-activate.js\" || exit 0",
+            "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\goalkeeper-activate.js\" }",
             "timeout": 5,
-            "statusMessage": "Loading goalguard..."
+            "statusMessage": "Loading goalkeeper..."
           }
         ]
       }
@@ -19,10 +19,10 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v node >/dev/null 2>&1 && node \"${CLAUDE_PLUGIN_ROOT}/hooks/goalguard-prompt.js\" || exit 0",
-            "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\goalguard-prompt.js\" }",
+            "command": "command -v node >/dev/null 2>&1 && node \"${CLAUDE_PLUGIN_ROOT}/hooks/goalkeeper-prompt.js\" || exit 0",
+            "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\goalkeeper-prompt.js\" }",
             "timeout": 5,
-            "statusMessage": "Checking goalguard..."
+            "statusMessage": "Checking goalkeeper..."
           }
         ]
       }
@@ -32,10 +32,10 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v node >/dev/null 2>&1 && node \"${CLAUDE_PLUGIN_ROOT}/hooks/goalguard-stop.js\" || exit 0",
-            "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\goalguard-stop.js\" }",
+            "command": "command -v node >/dev/null 2>&1 && node \"${CLAUDE_PLUGIN_ROOT}/hooks/goalkeeper-stop.js\" || exit 0",
+            "commandWindows": "if (Get-Command node -ErrorAction SilentlyContinue) { node \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\goalkeeper-stop.js\" }",
             "timeout": 10,
-            "statusMessage": "goalguard: checking goals..."
+            "statusMessage": "goalkeeper: checking goals..."
           }
         ]
       }

@@ -4,7 +4,7 @@
 
 `conformance.test.js` exercises every item in [SPEC.md §12](../SPEC.md#12-conformance-checklist)
 against the real hooks — no mocks, no dependencies. It drives the actual
-`goalguard-stop.js` and `goalguard-cli.js` over a throwaway state dir and
+`goalkeeper-stop.js` and `goalkeeper-cli.js` over a throwaway state dir and
 asserts the decision (`block` vs allow) for each mode and edge case.
 
 ```bash
@@ -16,7 +16,7 @@ to catch regressions in the decision core.
 
 ## Effect simulation
 
-`simulate.js` quantifies what goalguard mechanically does — intercept premature
+`simulate.js` quantifies what goalkeeper mechanically does — intercept premature
 stops and (in strict mode) verify each claimed completion — with a transparent,
 seeded Monte-Carlo model. No vendor model is invoked or implied; the point is a
 reproducible measurement of the *mechanism*, with every assumption on the table.
@@ -47,13 +47,13 @@ The early-stop rate is swept across **20% (mild), 35% (typical), 50% (severe)**.
 
 **Task completion** — all subgoals delivered with no human nudge:
 
-| early-stop | bare | goalguard | lift  |
+| early-stop | bare | goalkeeper | lift  |
 | ---------- | ---- | --------- | ----- |
 | 20%        | 41%  | 100%      | 2.4×  |
 | 35%        | 18%  | 100%      | 5.5×  |
 | 50%        | 6%   | 100%      | 15.6× |
 
-**Subgoals delivered** (of 5): bare **3.38 / 2.54 / 1.94** vs goalguard **5.00**.
+**Subgoals delivered** (of 5): bare **3.38 / 2.54 / 1.94** vs goalkeeper **5.00**.
 
 **Defects shipped per task:** strict-mode verification cuts escaped defects by
 **~80%** (1.24 → 0.25) across every early-stop rate.

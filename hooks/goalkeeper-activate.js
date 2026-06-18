@@ -2,14 +2,14 @@
 'use strict';
 
 /**
- * goalguard-activate.js  —  SessionStart hook.
+ * goalkeeper-activate.js  —  SessionStart hook.
  *
  * Loads (or initializes) project state and surfaces any goals carried over
  * from a previous session, so a resumed session is armed from turn one.
  */
 
-const rt = require('./goalguard-runtime');
-const cfg = require('./goalguard-config');
+const rt = require('./goalkeeper-runtime');
+const cfg = require('./goalkeeper-config');
 
 (async () => {
   const dir = rt.projectDir();
@@ -22,9 +22,9 @@ const cfg = require('./goalguard-config');
   const open = rt.openGoals(state.goals, state.mode);
   let ctx;
   if (state.mode === 'off') {
-    ctx = '[goalguard] installed, mode=off (disarmed). Run `/goalguard <objective>` to arm it.';
+    ctx = '[goalkeeper] installed, mode=off (disarmed). Run `/goalkeeper <objective>` to arm it.';
   } else if (open.length === 0) {
-    ctx = `[goalguard] armed, mode=${state.mode} (${cfg.MODE_BLURB[state.mode]}). No open goals. Run \`/goalguard <objective>\` to set one.`;
+    ctx = `[goalkeeper] armed, mode=${state.mode} (${cfg.MODE_BLURB[state.mode]}). No open goals. Run \`/goalkeeper <objective>\` to set one.`;
   } else {
     ctx = cfg.reminder(state);
   }

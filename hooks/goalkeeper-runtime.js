@@ -1,11 +1,11 @@
 'use strict';
 
 /**
- * goalguard-runtime.js
+ * goalkeeper-runtime.js
  *
- * Shared state + helpers for every goalguard hook and the CLI.
+ * Shared state + helpers for every goalkeeper hook and the CLI.
  *
- * State is project-scoped and lives in `<project>/.goalguard/state.json`.
+ * State is project-scoped and lives in `<project>/.goalkeeper/state.json`.
  * One project = one active goal set. Concurrent sessions on the same
  * project share the same goals, which is exactly what you want: "don't
  * stop working on THIS project until these goals are done."
@@ -21,18 +21,18 @@ const VALID_MODES = ['off', 'lite', 'standard', 'strict'];
 const DEFAULT_MODE = 'standard';
 const DEFAULT_MAX_LOOPS = 30;
 
-/** Resolve the project directory goalguard is guarding. */
+/** Resolve the project directory goalkeeper is guarding. */
 function projectDir(input) {
   return (
     process.env.CLAUDE_PROJECT_DIR ||
     (input && input.cwd) ||
-    process.env.GOALGUARD_DIR ||
+    process.env.GOALKEEPER_DIR ||
     process.cwd()
   );
 }
 
 function stateDir(dir) {
-  return path.join(dir || projectDir(), '.goalguard');
+  return path.join(dir || projectDir(), '.goalkeeper');
 }
 
 function statePath(dir) {
@@ -40,12 +40,12 @@ function statePath(dir) {
 }
 
 function envMode() {
-  const m = String(process.env.GOALGUARD_DEFAULT_MODE || '').toLowerCase();
+  const m = String(process.env.GOALKEEPER_DEFAULT_MODE || '').toLowerCase();
   return VALID_MODES.includes(m) ? m : DEFAULT_MODE;
 }
 
 function maxLoops() {
-  const n = parseInt(process.env.GOALGUARD_MAX_LOOPS || '', 10);
+  const n = parseInt(process.env.GOALKEEPER_MAX_LOOPS || '', 10);
   return Number.isFinite(n) && n > 0 ? n : DEFAULT_MAX_LOOPS;
 }
 

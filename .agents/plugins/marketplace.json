@@ -1,14 +1,14 @@
 {
-  "name": "goalguard",
+  "name": "goalkeeper",
   "interface": {
-    "displayName": "goalguard"
+    "displayName": "goalkeeper"
   },
   "plugins": [
     {
-      "name": "goalguard",
+      "name": "goalkeeper",
       "source": {
         "source": "git-subdir",
-        "url": "https://github.com/publu/goalguard.git",
+        "url": "https://github.com/publu/goalkeeper.git",
         "path": "./",
         "ref": "main"
       },

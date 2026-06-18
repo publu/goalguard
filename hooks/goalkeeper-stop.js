@@ -2,7 +2,7 @@
 'use strict';
 
 /**
- * goalguard-stop.js  —  the continuation engine.
+ * goalkeeper-stop.js  —  the continuation engine.
  *
  * Fires on the Claude Code `Stop` event (when the agent tries to end its
  * turn). If goals remain open, it returns {"decision":"block","reason":...}
@@ -14,14 +14,14 @@
  *   - `off` mode never blocks.
  *   - A session with no recorded goals is never trapped.
  *   - `lite` mode blocks exactly once.
- *   - A per-project loop budget (GOALGUARD_MAX_LOOPS, default 30) stands
+ *   - A per-project loop budget (GOALKEEPER_MAX_LOOPS, default 30) stands
  *     the guard down if it blocks repeatedly WITHOUT progress.
  *   - Any real progress (open-goal count drops) refills the budget, so the
  *     rail only trips when the agent is genuinely stuck.
  */
 
-const rt = require('./goalguard-runtime');
-const cfg = require('./goalguard-config');
+const rt = require('./goalkeeper-runtime');
+const cfg = require('./goalkeeper-config');
 
 function readStdin() {
   return new Promise((resolve) => {

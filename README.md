@@ -1,13 +1,13 @@
 <p align="center">
-  <img src="assets/goalguard.png" alt="goalguard" width="300">
+  <img src="assets/goalkeeper.png" alt="goalkeeper" width="300">
 </p>
 
-<h1 align="center">goalguard</h1>
+<h1 align="center">goalkeeper</h1>
 
 <p align="center"><em>You say you're done. She checks the list. You're not done.</em></p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/stars/publu/goalguard?style=flat-square&label=stars&color=333&labelColor=555" alt="stars">
+  <img src="https://img.shields.io/github/stars/publu/goalkeeper?style=flat-square&label=stars&color=333&labelColor=555" alt="stars">
   <img src="https://img.shields.io/badge/release-v0.1.0-333?style=flat-square&labelColor=555" alt="release">
   <img src="https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20Codex-333?style=flat-square&labelColor=555" alt="works with">
   <img src="https://img.shields.io/badge/license-MIT-333?style=flat-square&labelColor=555" alt="license">
@@ -28,17 +28,17 @@ Has signed off every release since before CI existed. You tell her you're
 finished; she runs a finger down the list, says *"three of these aren't
 checked,"* and points you back to your desk.
 
-goalguard puts her on the **Stop hook** of your AI agent.
+goalkeeper puts her on the **Stop hook** of your AI agent.
 
 The philosophy is one line: **the agent doesn't get to decide it's done — the
 checklist does.** Most agents stop the moment they *think* they're finished — the
 half-done refactor, the "I'll leave the tests to you", the silently dropped
-requirement. goalguard holds a session to an explicit, verifiable checklist and
+requirement. goalkeeper holds a session to an explicit, verifiable checklist and
 bounces every premature stop straight back into more work.
 
 ## The decision it makes
 
-On every attempt to stop, goalguard walks a short ladder:
+On every attempt to stop, goalkeeper walks a short ladder:
 
 1. **Guard disarmed?** (`off` mode) → let it stop.
 2. **No goals on the checklist?** → let it stop. (An un-armed session is never trapped.)
@@ -63,7 +63,7 @@ From the bundled, seeded simulation of the mechanism (`node benchmarks/simulate.
 - **80% fewer defects shipped** in strict mode, because every claimed completion
   buys an independent verification pass.
 
-| Agent early-stop rate | Tasks finished — bare | Tasks finished — goalguard | Lift |
+| Agent early-stop rate | Tasks finished — bare | Tasks finished — goalkeeper | Lift |
 | --------------------- | --------------------- | -------------------------- | ---- |
 | 20% (mild)            | 41%                   | 100%                       | 2.4× |
 | 35% (typical)         | 18%                   | 100%                       | 5.5× |
@@ -79,11 +79,11 @@ byte-for-byte. To measure your own model on your own tasks, run any task twice
 ## How it works (the whole trick)
 
 Claude Code and Codex both fire a **`Stop` hook** when the agent tries to end its
-turn. goalguard's hook looks at your goal checklist and, if anything is open,
+turn. goalkeeper's hook looks at your goal checklist and, if anything is open,
 returns:
 
 ```json
-{ "decision": "block", "reason": "STOP BLOCKED BY GOALGUARD. You are not done. 2 goals remain open: …" }
+{ "decision": "block", "reason": "STOP BLOCKED BY GOALKEEPER. You are not done. 2 goals remain open: …" }
 ```
 
 The host feeds that `reason` back to the model **instead of stopping** — on Claude
@@ -102,23 +102,23 @@ compatibility alias, so nothing in the engine changes between them.
 **Claude Code**
 
 ```
-/plugin marketplace add publu/goalguard
-/plugin install goalguard@goalguard
+/plugin marketplace add publu/goalkeeper
+/plugin install goalkeeper@goalkeeper
 ```
 
 **Codex**
 
 ```
-codex plugin marketplace add publu/goalguard
+codex plugin marketplace add publu/goalkeeper
 codex
 ```
 
-Then open `/plugins`, install goalguard, open `/hooks`, review and **trust** its
+Then open `/plugins`, install goalkeeper, open `/hooks`, review and **trust** its
 hooks, and start a new thread. (In Codex, commands are invoked with `@`, e.g.
-`@goalguard-status`.)
+`@goalkeeper-status`.)
 
 Requires `node` on your `PATH`. If node is missing, the hooks no-op and the host
-behaves exactly as if goalguard weren't installed.
+behaves exactly as if goalkeeper weren't installed.
 
 ---
 
@@ -127,18 +127,18 @@ behaves exactly as if goalguard weren't installed.
 Point it at an objective and walk away:
 
 ```
-/goalguard get the auth refactor to green — all tests pass and lint is clean
+/goalkeeper get the auth refactor to green — all tests pass and lint is clean
 ```
 
-goalguard asks the agent to break that into concrete, verifiable goals, arms the
+goalkeeper asks the agent to break that into concrete, verifiable goals, arms the
 guard, and the agent works until every one is checked off. Check status anytime:
 
 ```
-/goalguard-status
+/goalkeeper-status
 ```
 
 ```
-goalguard  mode=strict  (blocks until every goal is done AND independently verified)
+goalkeeper  mode=strict  (blocks until every goal is done AND independently verified)
 3 goal(s), 1 open:
   [x] g1: npm test exits 0
   [x] g2: eslint reports 0 errors
@@ -160,7 +160,7 @@ When the checklist is empty, the guard steps aside on its own. You never run a
 | `strict`   | Blocks until every goal is done **and independently verified**.      |
 
 ```
-/goalguard-mode strict
+/goalkeeper-mode strict
 ```
 
 **Strict mode is the long-runner.** Marking a goal `done` isn't enough — it stays
@@ -175,12 +175,12 @@ working.
 
 | Command                                   | Does                                            |
 | ----------------------------------------- | ----------------------------------------------- |
-| `/goalguard <objective>`                  | Decompose an objective into goals and start.    |
-| `/goalguard-add <goal>`                   | Add one verifiable goal.                         |
-| `/goalguard-status`                       | Show mode + checklist.                            |
-| `/goalguard-mode [off\|lite\|standard\|strict]` | Get/set strictness.                       |
-| `/goalguard-release`                      | Clear goals, stand the guard down.               |
-| `/goalguard-help`                         | What goalguard is, in the session.               |
+| `/goalkeeper <objective>`                  | Decompose an objective into goals and start.    |
+| `/goalkeeper-add <goal>`                   | Add one verifiable goal.                         |
+| `/goalkeeper-status`                       | Show mode + checklist.                            |
+| `/goalkeeper-mode [off\|lite\|standard\|strict]` | Get/set strictness.                       |
+| `/goalkeeper-release`                      | Clear goals, stand the guard down.               |
+| `/goalkeeper-help`                         | What goalkeeper is, in the session.               |
 
 The agent checks goals off as it works via the bundled CLI
 (`done`, `verify`, `reopen`, `remove`) — you rarely touch it directly.
@@ -189,18 +189,18 @@ The agent checks goals off as it works via the bundled CLI
 
 ## It can't loop forever
 
-A guard that could wedge a session would be worse than no guard. goalguard has
+A guard that could wedge a session would be worse than no guard. goalkeeper has
 three independent exits:
 
 - **`off` mode** disarms it entirely.
 - **An empty checklist** releases it — and an un-armed session is never trapped.
-- **A no-progress loop budget** (`GOALGUARD_MAX_LOOPS`, default **30**) stands the
+- **A no-progress loop budget** (`GOALKEEPER_MAX_LOOPS`, default **30**) stands the
   guard down if it blocks repeatedly *without the open-goal count falling*, then
   surfaces the unfinished goals to you. **Progress refills the budget**, so a
   productive agent never trips it — only a genuinely stuck one does.
 
 And every hook **fails open**: any error, malformed input, or corrupt state file
-results in a normal stop. goalguard can extend a session; it can never freeze one.
+results in a normal stop. goalkeeper can extend a session; it can never freeze one.
 
 ---
 
@@ -208,17 +208,17 @@ results in a normal stop. goalguard can extend a session; it can never freeze on
 
 | Env var                  | Default    | Effect                                                  |
 | ------------------------ | ---------- | ------------------------------------------------------- |
-| `GOALGUARD_DEFAULT_MODE` | `standard` | Starting mode.                                          |
-| `GOALGUARD_MAX_LOOPS`    | `30`       | Max stop-blocks without progress before standing down.  |
+| `GOALKEEPER_DEFAULT_MODE` | `standard` | Starting mode.                                          |
+| `GOALKEEPER_MAX_LOOPS`    | `30`       | Max stop-blocks without progress before standing down.  |
 
-State lives in `<project>/.goalguard/state.json` — plain JSON, safe to read,
+State lives in `<project>/.goalkeeper/state.json` — plain JSON, safe to read,
 edit, or delete by hand.
 
 ---
 
 ## What it is, and isn't
 
-goalguard governs **when an agent may stop** — nothing else. It is not a planner,
+goalkeeper governs **when an agent may stop** — nothing else. It is not a planner,
 a sandbox, a permission system, or a scheduler. It tracks completion; the agent
 and you decide what the goals are. The full design is in **[SPEC.md](./SPEC.md)**.
 
@@ -226,7 +226,7 @@ and you decide what the goals are. The full design is in **[SPEC.md](./SPEC.md)*
 
 ## Honesty is the whole game
 
-goalguard can force the agent to keep going, but only the agent can close a goal,
+goalkeeper can force the agent to keep going, but only the agent can close a goal,
 and only honestly. The bundled skill drills one rule into the agent: **never mark
 a goal done to escape the guard.** Out-of-scope goals are dropped *explicitly*,
 with a reason, never silently. Strict mode's verification pass exists precisely to

@@ -2,15 +2,15 @@
 'use strict';
 
 /**
- * goalguard-prompt.js  —  UserPromptSubmit hook.
+ * goalkeeper-prompt.js  —  UserPromptSubmit hook.
  *
  * Re-staples the open checklist into context on every user turn. As the
  * conversation grows the model drifts; this keeps the goals (and how to close
  * them) in view so the Stop guard rarely has to fire.
  */
 
-const rt = require('./goalguard-runtime');
-const cfg = require('./goalguard-config');
+const rt = require('./goalkeeper-runtime');
+const cfg = require('./goalkeeper-config');
 
 (async () => {
   const dir = rt.projectDir();

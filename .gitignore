@@ -1,5 +1,5 @@
-# goalguard runtime state (created per-project at use time)
-.goalguard/
+# goalkeeper runtime state (created per-project at use time)
+.goalkeeper/
 
 # Node
 node_modules/

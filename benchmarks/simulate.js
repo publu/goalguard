@@ -2,9 +2,9 @@
 'use strict';
 
 /**
- * goalguard effect simulation.
+ * goalkeeper effect simulation.
  *
- * goalguard's value is mechanical and measurable: it intercepts premature
+ * goalkeeper's value is mechanical and measurable: it intercepts premature
  * stops, and (in strict mode) forces a verification pass over each claimed
  * completion. This harness quantifies both effects with a transparent,
  * seeded Monte-Carlo model so the numbers are exactly reproducible and the
@@ -111,14 +111,14 @@ if (process.argv.includes('--json')) {
 const pct = (x) => (x * 100).toFixed(0) + '%';
 const f2 = (x) => x.toFixed(2);
 
-console.log(`goalguard effect simulation`);
+console.log(`goalkeeper effect simulation`);
 console.log(
   `params: K=${BASE.K} subgoals, pDefect=${BASE.pDefect}, pCatch=${BASE.pCatch}, ` +
     `trials=${BASE.trials} per cell, seed=0x${BASE.seed.toString(16)}\n`
 );
 
 console.log('Task completion (all subgoals delivered, no human nudge)');
-console.log('  early-stop |   bare  | goalguard | lift');
+console.log('  early-stop |   bare  | goalkeeper | lift');
 for (const r of rows) {
   const lift = (r.standard.completionRate / r.bare.completionRate).toFixed(1);
   console.log(
@@ -128,7 +128,7 @@ for (const r of rows) {
 }
 
 console.log('\nSubgoals delivered per task (of ' + BASE.K + ')');
-console.log('  early-stop |  bare  | goalguard');
+console.log('  early-stop |  bare  | goalkeeper');
 for (const r of rows) {
   console.log(
     `     ${pct(r.pStop).padStart(4)}    | ${f2(r.bare.meanDelivered)}  |   ${f2(r.standard.meanDelivered)}`
