@@ -2,16 +2,49 @@
 
 **The guard that won't let your AI agent quit early.**
 
-Most agents stop the moment they *think* they're done — half-finished refactors,
-the "I'll leave the tests to you", the silent dropped requirement. goalguard
-holds a session to an explicit, verifiable checklist and, every time the agent
-tries to stop, hands it back its own unfinished work as the next instruction.
+A simple philosophy: **the agent doesn't get to decide it's done — the checklist does.**
+Most agents stop the moment they *think* they're finished — the half-done
+refactor, the "I'll leave the tests to you", the silently dropped requirement.
+goalguard holds a session to an explicit, verifiable checklist and bounces every
+premature stop straight back into more work.
+
+## The decision it makes
+
+On every attempt to stop, goalguard walks a short ladder:
+
+1. **Guard disarmed?** (`off` mode) → let it stop.
+2. **No goals on the checklist?** → let it stop. (An un-armed session is never trapped.)
+3. **Every goal done — and, in strict mode, verified?** → release; let it stop.
+4. **Stuck (blocked repeatedly with no progress)?** → stand down, surface what's unfinished.
+5. **Otherwise** → block the stop and hand the agent its own open checklist as the next instruction.
 
 The agent keeps going until the job is **provably** done — and in strict mode,
-until it has **double-checked its own work**. That's how you get a single
-session to run far longer, and finish far more, than it otherwise would.
+until it has **double-checked its own work**. Nothing on the chopping block:
+the loop is bounded, fails open, and never compromises a real stop.
 
-> Agents are good at starting and bad at finishing. goalguard fixes the finishing.
+## Results
+
+From the bundled, seeded simulation of the mechanism (`node benchmarks/simulate.js`
+— K=5 verifiable subgoals, 20k trials per cell; assumptions stated in
+[benchmarks/README.md](./benchmarks/README.md)):
+
+- **2.4× – 15.6× more tasks finished** end-to-end, without a human nudge, as an
+  agent's early-stop rate rises from mild to severe.
+- **Full delivery every run** — 5 of 5 subgoals vs **1.9 – 3.4 of 5** for an
+  unguarded agent.
+- **80% fewer defects shipped** in strict mode, because every claimed completion
+  buys an independent verification pass.
+
+| Agent early-stop rate | Tasks finished — bare | Tasks finished — goalguard | Lift |
+| --------------------- | --------------------- | -------------------------- | ---- |
+| 20% (mild)            | 41%                   | 100%                       | 2.4× |
+| 35% (typical)         | 18%                   | 100%                       | 5.5× |
+| 50% (severe)          | 6%                    | 100%                       | 15.6× |
+
+These quantify the mechanism under a transparent model, not a vendor benchmark —
+the harness is in the repo, the seed is fixed, and the numbers reproduce
+byte-for-byte. To measure your own model on your own tasks, run any task twice
+(guard `off` vs `strict`) as described in [benchmarks/README.md](./benchmarks/README.md).
 
 ---
 
