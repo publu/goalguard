@@ -9,7 +9,7 @@
 <p align="center">
   <img src="https://img.shields.io/github/stars/publu/goalguard?style=flat-square&label=stars&color=333&labelColor=555" alt="stars">
   <img src="https://img.shields.io/badge/release-v0.1.0-333?style=flat-square&labelColor=555" alt="release">
-  <img src="https://img.shields.io/badge/works%20with-Claude%20Code-333?style=flat-square&labelColor=555" alt="works with">
+  <img src="https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20Codex-333?style=flat-square&labelColor=555" alt="works with">
   <img src="https://img.shields.io/badge/license-MIT-333?style=flat-square&labelColor=555" alt="license">
 </p>
 
@@ -78,30 +78,47 @@ byte-for-byte. To measure your own model on your own tasks, run any task twice
 
 ## How it works (the whole trick)
 
-Claude Code fires a **`Stop` hook** when the agent tries to end its turn.
-goalguard's hook looks at your goal checklist and, if anything is open, returns:
+Claude Code and Codex both fire a **`Stop` hook** when the agent tries to end its
+turn. goalguard's hook looks at your goal checklist and, if anything is open,
+returns:
 
 ```json
 { "decision": "block", "reason": "STOP BLOCKED BY GOALGUARD. You are not done. 2 goals remain open: …" }
 ```
 
-Claude Code feeds that `reason` back to the model **instead of stopping**. So the
-agent reads its own unfinished checklist and gets back to work — automatically,
-no human in the loop. The guard releases the instant the last goal closes.
+The host feeds that `reason` back to the model **instead of stopping** — on Claude
+Code it continues the turn, on Codex it becomes the next user prompt. Either way
+the agent reads its own unfinished checklist and gets back to work, no human in
+the loop. The guard releases the instant the last goal closes.
 
-That's it. No daemon, no network, no magic — one hook and a JSON file.
+That's it. No daemon, no network, no magic — one hook and a JSON file. The exact
+same hooks run on both hosts; Codex even exposes `CLAUDE_PLUGIN_ROOT` as a
+compatibility alias, so nothing in the engine changes between them.
 
 ---
 
 ## Install
+
+**Claude Code**
 
 ```
 /plugin marketplace add publu/goalguard
 /plugin install goalguard@goalguard
 ```
 
-Requires `node` on your `PATH`. If node is missing, the hooks no-op and Claude
-Code behaves exactly as if goalguard weren't installed.
+**Codex**
+
+```
+codex plugin marketplace add publu/goalguard
+codex
+```
+
+Then open `/plugins`, install goalguard, open `/hooks`, review and **trust** its
+hooks, and start a new thread. (In Codex, commands are invoked with `@`, e.g.
+`@goalguard-status`.)
+
+Requires `node` on your `PATH`. If node is missing, the hooks no-op and the host
+behaves exactly as if goalguard weren't installed.
 
 ---
 

@@ -12,6 +12,7 @@
   "license": "MIT",
   "keywords": [
     "claude-code",
+    "codex",
     "hooks",
     "stop-hook",
     "agent",

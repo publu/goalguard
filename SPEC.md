@@ -221,19 +221,29 @@ Selected via `GOALGUARD_DEFAULT_MODE`, `goalguard-cli.js mode`, or
 
 ## 9. Contracts (host integration)
 
-goalguard depends only on documented Claude Code hook contracts:
+goalguard depends only on documented hook contracts that **Claude Code and Codex
+share**:
 
 - **Stop** receives `{session_id, transcript_path, cwd, stop_hook_active, …}` on
   stdin; returning `{"decision":"block","reason":string}` forces continuation
   with `reason` as the next instruction. (Exit code 2 + stderr is an equivalent
-  block; goalguard uses the JSON form.)
+  block; goalguard uses the JSON form.) On Claude Code the turn continues; on
+  Codex the `reason` is injected as the next user prompt — same effect.
 - **UserPromptSubmit / SessionStart** accept
   `{"hookSpecificOutput":{"hookEventName":…,"additionalContext":string}}` to
   inject context without blocking.
 
-The decision core (`runtime` + `config`) is pure and host-independent; porting to
-Codex (`systemMessage`-prefixed output) or Copilot (`additionalContext` JSON) is
-an output-adapter change only — the decision logic is untouched.
+### 9.1 Hosts
+
+| Host        | Status     | Notes                                                                                   |
+| ----------- | ---------- | --------------------------------------------------------------------------------------- |
+| Claude Code | supported  | Manifest `.claude-plugin/{plugin,marketplace}.json`; `${CLAUDE_PLUGIN_ROOT}`.            |
+| Codex CLI   | supported  | Manifest `.codex-plugin/plugin.json` + marketplace at `.agents/plugins/marketplace.json`. Identical `hooks/hooks.json`, identical Stop-veto, and Codex aliases `CLAUDE_PLUGIN_ROOT` — so the engine and command paths are byte-for-byte the same. |
+| Copilot     | roadmap    | Copilot hooks inject context but the Stop-veto path is unverified; would degrade to a `lite`-style reminder until confirmed. |
+
+The decision core (`runtime` + `config`) is pure and host-independent. Because
+Claude Code and Codex use the same hook schema, the *only* per-host artifacts are
+the plugin manifests; no JavaScript differs between them.
 
 ---
 

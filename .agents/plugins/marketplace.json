@@ -1,0 +1,22 @@
+{
+  "name": "goalguard",
+  "interface": {
+    "displayName": "goalguard"
+  },
+  "plugins": [
+    {
+      "name": "goalguard",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/publu/goalguard.git",
+        "path": "./",
+        "ref": "main"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "NONE"
+      },
+      "category": "Workflow"
+    }
+  ]
+}
