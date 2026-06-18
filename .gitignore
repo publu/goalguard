@@ -1,0 +1,10 @@
+# goalguard runtime state (created per-project at use time)
+.goalguard/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS
+.DS_Store
+*.tmp

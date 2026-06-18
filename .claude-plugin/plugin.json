@@ -1,0 +1,23 @@
+{
+  "name": "goalguard",
+  "displayName": "goalguard",
+  "version": "0.1.0",
+  "description": "A Stop-hook guard that won't let an AI agent quit until its goals are provably complete. Re-injects the unfinished checklist on every attempt to stop, and double-checks the work in strict mode.",
+  "author": {
+    "name": "publu",
+    "url": "https://github.com/publu"
+  },
+  "homepage": "https://github.com/publu/goalguard",
+  "repository": "https://github.com/publu/goalguard",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "hooks",
+    "stop-hook",
+    "agent",
+    "autonomy",
+    "goals",
+    "verification",
+    "long-running"
+  ]
+}

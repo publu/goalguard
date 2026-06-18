@@ -1,0 +1,161 @@
+# goalguard
+
+**The guard that won't let your AI agent quit early.**
+
+Most agents stop the moment they *think* they're done — half-finished refactors,
+the "I'll leave the tests to you", the silent dropped requirement. goalguard
+holds a session to an explicit, verifiable checklist and, every time the agent
+tries to stop, hands it back its own unfinished work as the next instruction.
+
+The agent keeps going until the job is **provably** done — and in strict mode,
+until it has **double-checked its own work**. That's how you get a single
+session to run far longer, and finish far more, than it otherwise would.
+
+> Agents are good at starting and bad at finishing. goalguard fixes the finishing.
+
+---
+
+## How it works (the whole trick)
+
+Claude Code fires a **`Stop` hook** when the agent tries to end its turn.
+goalguard's hook looks at your goal checklist and, if anything is open, returns:
+
+```json
+{ "decision": "block", "reason": "STOP BLOCKED BY GOALGUARD. You are not done. 2 goals remain open: …" }
+```
+
+Claude Code feeds that `reason` back to the model **instead of stopping**. So the
+agent reads its own unfinished checklist and gets back to work — automatically,
+no human in the loop. The guard releases the instant the last goal closes.
+
+That's it. No daemon, no network, no magic — one hook and a JSON file.
+
+---
+
+## Install
+
+```
+/plugin marketplace add publu/goalguard
+/plugin install goalguard@goalguard
+```
+
+Requires `node` on your `PATH`. If node is missing, the hooks no-op and Claude
+Code behaves exactly as if goalguard weren't installed.
+
+---
+
+## Use it
+
+Point it at an objective and walk away:
+
+```
+/goalguard get the auth refactor to green — all tests pass and lint is clean
+```
+
+goalguard asks the agent to break that into concrete, verifiable goals, arms the
+guard, and the agent works until every one is checked off. Check status anytime:
+
+```
+/goalguard-status
+```
+
+```
+goalguard  mode=strict  (blocks until every goal is done AND independently verified)
+3 goal(s), 1 open:
+  [x] g1: npm test exits 0
+  [x] g2: eslint reports 0 errors
+  [~] g3: README documents the new AUTH_SECRET env var   <-- needs verification
+```
+
+When the checklist is empty, the guard steps aside on its own. You never run a
+"turn it off" command after success.
+
+---
+
+## Modes
+
+| Mode       | Behavior                                                              |
+| ---------- | -------------------------------------------------------------------- |
+| `off`      | Disarmed. Never blocks.                                               |
+| `lite`     | Blocks **once** with a reminder, then lets the agent stop.           |
+| `standard` | Blocks until every goal is marked **done**. *(default)*              |
+| `strict`   | Blocks until every goal is done **and independently verified**.      |
+
+```
+/goalguard-mode strict
+```
+
+**Strict mode is the long-runner.** Marking a goal `done` isn't enough — it stays
+open until the agent does a separate, evidence-based pass (re-read the code, run
+the test, prove it) and marks it `verified`. Every claim of completion buys a
+double-check. That single rule is the biggest reason an armed session keeps
+working.
+
+---
+
+## Commands
+
+| Command                                   | Does                                            |
+| ----------------------------------------- | ----------------------------------------------- |
+| `/goalguard <objective>`                  | Decompose an objective into goals and start.    |
+| `/goalguard-add <goal>`                   | Add one verifiable goal.                         |
+| `/goalguard-status`                       | Show mode + checklist.                            |
+| `/goalguard-mode [off\|lite\|standard\|strict]` | Get/set strictness.                       |
+| `/goalguard-release`                      | Clear goals, stand the guard down.               |
+| `/goalguard-help`                         | What goalguard is, in the session.               |
+
+The agent checks goals off as it works via the bundled CLI
+(`done`, `verify`, `reopen`, `remove`) — you rarely touch it directly.
+
+---
+
+## It can't loop forever
+
+A guard that could wedge a session would be worse than no guard. goalguard has
+three independent exits:
+
+- **`off` mode** disarms it entirely.
+- **An empty checklist** releases it — and an un-armed session is never trapped.
+- **A no-progress loop budget** (`GOALGUARD_MAX_LOOPS`, default **30**) stands the
+  guard down if it blocks repeatedly *without the open-goal count falling*, then
+  surfaces the unfinished goals to you. **Progress refills the budget**, so a
+  productive agent never trips it — only a genuinely stuck one does.
+
+And every hook **fails open**: any error, malformed input, or corrupt state file
+results in a normal stop. goalguard can extend a session; it can never freeze one.
+
+---
+
+## Configuration
+
+| Env var                  | Default    | Effect                                                  |
+| ------------------------ | ---------- | ------------------------------------------------------- |
+| `GOALGUARD_DEFAULT_MODE` | `standard` | Starting mode.                                          |
+| `GOALGUARD_MAX_LOOPS`    | `30`       | Max stop-blocks without progress before standing down.  |
+
+State lives in `<project>/.goalguard/state.json` — plain JSON, safe to read,
+edit, or delete by hand.
+
+---
+
+## What it is, and isn't
+
+goalguard governs **when an agent may stop** — nothing else. It is not a planner,
+a sandbox, a permission system, or a scheduler. It tracks completion; the agent
+and you decide what the goals are. The full design is in **[SPEC.md](./SPEC.md)**.
+
+---
+
+## Honesty is the whole game
+
+goalguard can force the agent to keep going, but only the agent can close a goal,
+and only honestly. The bundled skill drills one rule into the agent: **never mark
+a goal done to escape the guard.** Out-of-scope goals are dropped *explicitly*,
+with a reason, never silently. Strict mode's verification pass exists precisely to
+turn *"the model said it's done"* into *"the model proved it's done."*
+
+---
+
+## License
+
+MIT © contributors. See [LICENSE](./LICENSE).
